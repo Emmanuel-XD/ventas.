@@ -1,4 +1,23 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+require '../vendor/autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\EscposImage;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+try {
+	$printconnect = new WindowsPrintConnector("tickets_printer");
+	$printer = new Printer($printconnect);
+    $printer -> text("Hello World!\n");
+    $printer -> cut();
+
+    // Close printer 
+    $printer -> close();
+} catch(Exception $e) {
+    echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
+}
 
 session_start();
 error_reporting(0);
@@ -47,9 +66,10 @@ foreach ($_SESSION["carrito"] as $producto) {
 $base_de_datos->commit();
 unset($_SESSION["carrito"]);
 $_SESSION["carrito"] = [];
-echo "
-<script language='JavaScript'>
-alert('¡Excelente! Venta realizada correctamente');
-location.assign('../views/ventas.php?status=1');
-</script>";
+
+
+
+
+
+
 ?>

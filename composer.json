@@ -1,0 +1,6 @@
+{
+    "require": {
+        "psr/log": "^3.0",
+        "mike42/escpos-php": "^2.2"
+    }
+}
