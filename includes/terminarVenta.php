@@ -7,17 +7,6 @@ use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-try {
-	$printconnect = new WindowsPrintConnector("tickets_printer");
-	$printer = new Printer($printconnect);
-    $printer -> text("Hello World!\n");
-    $printer -> cut();
-
-    // Close printer 
-    $printer -> close();
-} catch(Exception $e) {
-    echo "Couldn't print to this printer: " . $e -> getMessage() . "\n";
-}
 
 session_start();
 error_reporting(0);
@@ -54,7 +43,6 @@ $sentencia->execute();
 $resultado = $sentencia->fetch(PDO::FETCH_OBJ);
 
 $idVenta = $resultado === false ? 1 : $resultado->id;
-
 $base_de_datos->beginTransaction();
 $sentencia = $base_de_datos->prepare("INSERT INTO productos_vendidos(id_producto, id_venta, cantidad) VALUES (?, ?, ?);");
 $sentenciaExistencia = $base_de_datos->prepare("UPDATE productos SET existencia = existencia - ? WHERE id = ?;");
@@ -66,6 +54,44 @@ foreach ($_SESSION["carrito"] as $producto) {
 $base_de_datos->commit();
 unset($_SESSION["carrito"]);
 $_SESSION["carrito"] = [];
+
+//Se consultan los datos y productos para el ticket 
+$sentencia = $base_de_datos->prepare("SELECT id, fecha, total, pago, cambio, nombre FROM ventas WHERE id = ?");
+$sentencia->execute([$id]);
+$venta = $sentencia->fetchObject();
+
+$sentenciaProductos = $base_de_datos->prepare("SELECT p.codigo, p.descripcion,p.precioVenta, pv.cantidad
+FROM productos p
+LEFT JOIN 
+productos_vendidos pv
+ON p.id = pv.id_producto
+WHERE pv.id_venta = ?");
+$sentenciaProductos->execute([$idVenta]);
+$productos = $sentenciaProductos->fetchAll();
+
+echo json_encode($productos);
+
+try {
+	$printconnect = new WindowsPrintConnector("tickets_printer");
+	$printer = new Printer($printconnect);
+	$printer -> setJustification(Printer::JUSTIFY_CENTER);
+    $printer -> text("¡TICKET DE COMPRA!\n");
+	
+	foreach ($productos as $producto) 
+	{
+		$realtotal = $producto->cantidad * $producto->precioVenta;
+		$line = sprintf('%-40.40s %5.0f %13.2f %13.2f', $producto->descripcion, $producto->cantidad, $producto->precioVenta, $realtotal);
+		$total = 0;
+		$subtotal = $producto->precioVenta * $producto->cantidad;
+		$total += $subtotal;
+		$printer -> text("$line\n");
+	}
+
+    $printer -> cut();
+    $printer -> close();
+} catch(Exception $e) {
+    $errorTicket = "Couldn't print to this printer: " . $e -> getMessage() . "\n";
+}
 
 
 
