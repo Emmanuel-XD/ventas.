@@ -115,7 +115,7 @@ $printer->feed();
 $printer->setPrintLeftMargin(0);
 $printer->setJustification(Printer::JUSTIFY_LEFT);
 $printer->setEmphasis(true);
-$printer->text(addSpaces('Item', 20) . addSpaces('QtyxPrice', 20) . addSpaces('Tot(f)', 8) . "\n");
+$printer->text(addSpaces('Item', 11) . addSpaces('QtyxPrice', 10) . addSpaces('Tot(f)', 11) . "\n");
 $printer->setEmphasis(false);
 $items = [];
 $items[] = [
@@ -143,19 +143,19 @@ foreach ($items as $item) {
     $name_lines = str_split($item['name'], 15);
     foreach ($name_lines as $k => $l) {
         $l = trim($l);
-        $name_lines[$k] = addSpaces($l, 20);
+        $name_lines[$k] = addSpaces($l, 11);
     }
 
     $qtyx_price = str_split($item['qtyx_price'], 15);
     foreach ($qtyx_price as $k => $l) {
         $l = trim($l);
-        $qtyx_price[$k] = addSpaces($l, 20);
+        $qtyx_price[$k] = addSpaces($l, 10);
     }
 
     $total_price = str_split($item['total_price'], 8);
     foreach ($total_price as $k => $l) {
         $l = trim($l);
-        $total_price[$k] = addSpaces($l, 8);
+        $total_price[$k] = addSpaces($l, 11);
     }
 
     $counter = 0;
@@ -183,13 +183,13 @@ foreach ($items as $item) {
     $igst_lines = str_split($item['igst'], 15);
     foreach ($igst_lines as $k => $l) {
         $l = trim($l);
-        $igst_lines[$k] = addSpaces($l, 20);
+        $igst_lines[$k] = addSpaces($l, 11);
     }
 
-    $cgst_price = str_split($item['cgst'], 28);
+    $cgst_price = str_split($item['cgst'], 10);
     foreach ($cgst_price as $k => $l) {
         $l = trim($l);
-        $cgst_price[$k] = addSpaces($l, 28);
+        $cgst_price[$k] = addSpaces($l, 11);
     }
 
 
@@ -215,13 +215,13 @@ foreach ($items as $item) {
     $mrp_lines = str_split($item['mrp'], 15);
     foreach ($mrp_lines as $k => $l) {
         $l = trim($l);
-        $mrp_lines[$k] = addSpaces($l, 20);
+        $mrp_lines[$k] = addSpaces($l, 14);
     }
 
     $upr_price = str_split($item['upr'], 28);
     foreach ($upr_price as $k => $l) {
         $l = trim($l);
-        $upr_price[$k] = addSpaces($l, 28);
+        $upr_price[$k] = addSpaces($l, 18);
     }
 
 
