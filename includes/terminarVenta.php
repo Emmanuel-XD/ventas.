@@ -3,10 +3,13 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 require '../vendor/autoload.php';
+use Mike42\Escpos;
 use Mike42\Escpos\Printer;
-use Mike42\Escpos\EscposImage;
-use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+
+
+
+
 session_start();
 error_reporting(0);
 	$varsesion = $_SESSION['nombre'];
@@ -110,52 +113,45 @@ function addSpaces($string = '', $valid_string_length = 0) {
 $connector = new WindowsPrintConnector("tickets_printer");
 $printer = new Printer($connector);
 
+$vendedor  = $venta->nombre;
+$ticket = $venta->id;
+$tfecha = $venta->fecha;
 
 $printer->feed();
 $printer->setPrintLeftMargin(0);
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer ->text("TICKET DE COMPRA\n\n\n");
 $printer->setJustification(Printer::JUSTIFY_LEFT);
+$printer->text("Atiende: $vendedor  \n");
+$printer->text("Ticket: $ticket \n");
+$printer->text("Fecha: $tfecha \n");
+$printer -> text("--------------------------------");
 $printer->setEmphasis(true);
-$printer->text(addSpaces('Item', 11) . addSpaces('QtyxPrice', 10) . addSpaces('Tot(f)', 11) . "\n");
+$printer->text(addSpaces('Productos', 12) . addSpaces('Cant/Precio', 12) . addSpaces('Total', 8) . "\n");
 $printer->setEmphasis(false);
-$items = [];
-$items[] = [
-    'name' => 'The name of the product 1 goes here',
-    'qtyx_price' => '100.00',
-    'total_price' => '100.00',
-    'igst' => '14.00',
-    'cgst' => '14.00',
-    'mrp' => '14.00',
-    'upr' => '14.00',
-];
-$items[] = [
-    'name' => 'The name of the product 2 goes here',
-    'qtyx_price' => '200.00',
-    'total_price' => '200.00',
-    'igst' => '14.00',
-    'cgst' => '14.00',
-    'mrp' => '14.00',
-    'upr' => '14.00',
-];
 
-foreach ($items as $item) {
-
+foreach ($productos as $producto)  {
+	$realtotal = $producto->cantidad * $producto->precioVenta;
     //Current item ROW 1
-    $name_lines = str_split($item['name'], 15);
+    $name_lines = str_split($producto['descripcion'], 15);
     foreach ($name_lines as $k => $l) {
         $l = trim($l);
-        $name_lines[$k] = addSpaces($l, 11);
+        $name_lines[$k] = addSpaces($l, 12);
     }
+		$cantprice = $producto['cantidad'];
+		$cantprice .= " X ";
+		$cantprice .= $producto['precioVenta'];
 
-    $qtyx_price = str_split($item['qtyx_price'], 15);
+    $qtyx_price = str_split($cantprice, 15);
     foreach ($qtyx_price as $k => $l) {
         $l = trim($l);
-        $qtyx_price[$k] = addSpaces($l, 10);
+        $qtyx_price[$k] = addSpaces($l, 12);
     }
 
-    $total_price = str_split($item['total_price'], 8);
+    $total_price = str_split($realtotal, 8);
     foreach ($total_price as $k => $l) {
         $l = trim($l);
-        $total_price[$k] = addSpaces($l, 11);
+        $total_price[$k] = addSpaces($l, 8);
     }
 
     $counter = 0;
@@ -179,77 +175,18 @@ foreach ($items as $item) {
         $printer->text($line . "\n");
     }
 
-    //Current item ROW 2
-    $igst_lines = str_split($item['igst'], 15);
-    foreach ($igst_lines as $k => $l) {
-        $l = trim($l);
-        $igst_lines[$k] = addSpaces($l, 11);
-    }
-
-    $cgst_price = str_split($item['cgst'], 10);
-    foreach ($cgst_price as $k => $l) {
-        $l = trim($l);
-        $cgst_price[$k] = addSpaces($l, 11);
-    }
-
-
-    $counter = 0;
-    $temp = [];
-    $temp[] = count($igst_lines);
-    $temp[] = count($cgst_price);
-    $counter = max($temp);
-
-    for ($i = 0; $i < $counter; $i++) {
-        $line = '';
-        if (isset($igst_lines[$i])) {
-            $line .= ($igst_lines[$i]);
-        }
-        if (isset($cgst_price[$i])) {
-            $line .= ($cgst_price[$i]);
-        }
-
-        $printer->text($line . "\n");
-    }
-
-    //Current item ROW 3
-    $mrp_lines = str_split($item['mrp'], 15);
-    foreach ($mrp_lines as $k => $l) {
-        $l = trim($l);
-        $mrp_lines[$k] = addSpaces($l, 14);
-    }
-
-    $upr_price = str_split($item['upr'], 28);
-    foreach ($upr_price as $k => $l) {
-        $l = trim($l);
-        $upr_price[$k] = addSpaces($l, 18);
-    }
-
-
-    $counter = 0;
-    $temp = [];
-    $temp[] = count($mrp_lines);
-    $temp[] = count($upr_price);
-
-    $counter = max($temp);
-
-    for ($i = 0; $i < $counter; $i++) {
-
-        $line = '';
-
-        if (isset($mrp_lines[$i])) {
-            $line .= ($mrp_lines[$i]);
-        }
-
-        if (isset($upr_price[$i])) {
-            $line .= ($upr_price[$i]);
-        }
-
-        $printer->text($line . "\n");
-    }
     $printer->feed();
 }
-
-
+$printer -> text("--------------------------------");
+$printer->setEmphasis(true);
+$lineTotal = sprintf('%-5.40s %-1.05s %13.40s','Total.','=', $tot1);
+$printer -> text("$lineTotal\n");
+$lineTunai = sprintf('%-5.40s %-1.05s %13.40s','Pago con.','=', $tot2);
+$printer -> text("$lineTunai\n");
+$lineDisc = sprintf('%-5.40s %-1.05s %13.40s','Cambio.','=', $tot3);
+$printer -> text("$lineDisc\n");
+$printer->setEmphasis(false);
+$printer -> text("--------------------------------");
 
 
 
