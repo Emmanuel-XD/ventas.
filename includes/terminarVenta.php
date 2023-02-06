@@ -72,9 +72,9 @@ try {
 	$printconnect = new WindowsPrintConnector("tickets_printer");
 	$printer = new Printer($printconnect);
     $printer -> text("¡TICKET DE COMPRA!\n\n\n\n");
-	$head = sprintf('%-10.40s %3.0f %-3.40s %3.40s %-2.40s %3.40s', "Productos", "Cantidad", "","Precio", '',"Total");
+	$head = sprintf('%-10.40s %-4.40s %-1.40s %1.40s %-1.40s %2.40s', "Productos", "Cantidad", "","Precio", '',"Total");
 	$printer -> text("$head \n");
-	$printer -> text("-----------------------------------------------");
+	$printer -> text("--------------------------------");
 
 	foreach ($productos as $producto) 
 	{
@@ -86,7 +86,8 @@ try {
 		$total += $subtotal;
 		$printer -> text("$line\n");
 	}
-
+	$printer -> text("--------------------------------");
+	
     $printer -> cut();
     $printer -> close();
 } catch(Exception $e) {
