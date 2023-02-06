@@ -8,6 +8,7 @@ use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
+
 session_start();
 error_reporting(0);
 	$varsesion = $_SESSION['nombre'];
@@ -69,29 +70,27 @@ WHERE pv.id_venta = ?");
 $sentenciaProductos->execute([$idVenta]);
 $productos = $sentenciaProductos->fetchAll();
 
-echo json_encode($productos);
-
 try {
 	$printconnect = new WindowsPrintConnector("tickets_printer");
 	$printer = new Printer($printconnect);
-	$printer -> setJustification(Printer::JUSTIFY_CENTER);
-    $printer -> text("¡TICKET DE COMPRA!\n");
-	
+    $printer -> text("¡TICKET DE COMPRA!\n\n\n\n");
+	$printer -> text("-----------------------------------------------");
 	foreach ($productos as $producto) 
 	{
 		$realtotal = $producto->cantidad * $producto->precioVenta;
-		$line = sprintf('%-40.40s %5.0f %13.2f %13.2f', $producto->descripcion, $producto->cantidad, $producto->precioVenta, $realtotal);
+		$line = sprintf('%-13.40s %3.0f %-3.40s %9.40s %-2.40s %13.40s', $producto->descripcion, $producto->cantidad, 'X',$producto->precioVenta, '=',$realtotal);
 		$total = 0;
 		$subtotal = $producto->precioVenta * $producto->cantidad;
 		$total += $subtotal;
 		$printer -> text("$line\n");
 	}
-
+	$printer -> text("-----------------------------------------------");
     $printer -> cut();
     $printer -> close();
 } catch(Exception $e) {
     $errorTicket = "Couldn't print to this printer: " . $e -> getMessage() . "\n";
 }
+
 
 
 
