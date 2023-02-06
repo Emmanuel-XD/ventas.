@@ -7,8 +7,6 @@ use Mike42\Escpos\Printer;
 use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
-
-
 session_start();
 error_reporting(0);
 	$varsesion = $_SESSION['nombre'];
@@ -74,24 +72,26 @@ try {
 	$printconnect = new WindowsPrintConnector("tickets_printer");
 	$printer = new Printer($printconnect);
     $printer -> text("¡TICKET DE COMPRA!\n\n\n\n");
+	$head = sprintf('%-10.40s %3.0f %-3.40s %3.40s %-2.40s %3.40s', "Productos", "Cantidad", "","Precio", '',"Total");
+	$printer -> text("$head \n");
 	$printer -> text("-----------------------------------------------");
+
 	foreach ($productos as $producto) 
 	{
 		$realtotal = $producto->cantidad * $producto->precioVenta;
-		$line = sprintf('%-13.40s %3.0f %-3.40s %9.40s %-2.40s %13.40s', $producto->descripcion, $producto->cantidad, 'X',$producto->precioVenta, '=',$realtotal);
+		$printer -> setTextSize(1, 1);
+		$line = sprintf('%-10.40s %-4.40s %-1.40s %1.40s %-1.40s %2.40s', $producto->descripcion, $producto->cantidad, 'X',$producto->precioVenta, '=',$realtotal);
 		$total = 0;
 		$subtotal = $producto->precioVenta * $producto->cantidad;
 		$total += $subtotal;
 		$printer -> text("$line\n");
 	}
-	$printer -> text("-----------------------------------------------");
+
     $printer -> cut();
     $printer -> close();
 } catch(Exception $e) {
     $errorTicket = "Couldn't print to this printer: " . $e -> getMessage() . "\n";
 }
-
-
 
 
 
