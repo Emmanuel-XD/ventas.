@@ -120,8 +120,7 @@ $printer = new Printer($connector);
 
 $printer->feed();
 $printer->setPrintLeftMargin(0);
-$printer -> setFont(Printer::FONT_B);
-$printer -> setTextSize(1, 1);
+
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer ->text("TICKET DE COMPRA\n\n\n");
 $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -134,6 +133,8 @@ $printer->text(addSpaces('Productos', 14) . addSpaces('Cant/Precio', 12) . addSp
 $printer->setEmphasis(false);
 $total = 0;
 foreach ($productos as $producto)  {
+$printer -> setFont(Printer::FONT_B);
+$printer -> setTextSize(1, 1);
 	$subtotal = $producto->cantidad * $producto->precioVenta;
 	$total += $subtotal; 
     //Current item ROW 1
@@ -181,6 +182,8 @@ foreach ($productos as $producto)  {
 
     $printer->feed();
 }
+$printer -> setFont(Printer::FONT_A);
+$printer -> setTextSize(1, 1);
 $printer -> text("--------------------------------");
 $printer->setEmphasis(true);
 $lineTotal = sprintf('%-5.40s %-1.05s %13.40s','Total.','=', $total);
