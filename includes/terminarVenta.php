@@ -11,7 +11,6 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 
 session_start();
-error_reporting(0);
 	$varsesion = $_SESSION['nombre'];
 
 	if($varsesion== null || $varsesion= ''){
@@ -30,9 +29,6 @@ $total = $_POST["total"];
 $pago = $_POST["pago"];
 $cambio = $_POST["cambio"];
 include_once "base_de_datos.php";
-
-session_start();
-error_reporting(0);
 	$varsesion = $_SESSION['nombre'];
 
 
@@ -59,8 +55,16 @@ $_SESSION["carrito"] = [];
 
 //Se consultan los datos y productos para el ticket 
 $sentencia = $base_de_datos->prepare("SELECT id, fecha, total, pago, cambio, nombre FROM ventas WHERE id = ?");
-$sentencia->execute([$id]);
+$sentencia->execute([$idVenta]);
 $venta = $sentencia->fetchObject();
+
+
+$cambio = $venta -> cambio;
+$pago = $venta -> pago;
+$vendedor  = $venta -> nombre;
+$ticket = $venta -> id;
+$tfecha = $venta -> fecha;
+
 
 $sentenciaProductos = $base_de_datos->prepare("SELECT p.codigo, p.descripcion,p.precioVenta, pv.cantidad
 FROM productos p
@@ -113,12 +117,11 @@ function addSpaces($string = '', $valid_string_length = 0) {
 $connector = new WindowsPrintConnector("tickets_printer");
 $printer = new Printer($connector);
 
-$vendedor  = $venta->nombre;
-$ticket = $venta->id;
-$tfecha = $venta->fecha;
 
 $printer->feed();
 $printer->setPrintLeftMargin(0);
+$printer -> setFont(Printer::FONT_B);
+$printer -> setTextSize(1, 1);
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer ->text("TICKET DE COMPRA\n\n\n");
 $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -127,31 +130,32 @@ $printer->text("Ticket: $ticket \n");
 $printer->text("Fecha: $tfecha \n");
 $printer -> text("--------------------------------");
 $printer->setEmphasis(true);
-$printer->text(addSpaces('Productos', 12) . addSpaces('Cant/Precio', 12) . addSpaces('Total', 8) . "\n");
+$printer->text(addSpaces('Productos', 14) . addSpaces('Cant/Precio', 12) . addSpaces('Total', 6) . "\n");
 $printer->setEmphasis(false);
-
+$total = 0;
 foreach ($productos as $producto)  {
-	$realtotal = $producto->cantidad * $producto->precioVenta;
+	$subtotal = $producto->cantidad * $producto->precioVenta;
+	$total += $subtotal; 
     //Current item ROW 1
-    $name_lines = str_split($producto['descripcion'], 15);
+    $name_lines = str_split($producto -> descripcion, 10);
     foreach ($name_lines as $k => $l) {
         $l = trim($l);
-        $name_lines[$k] = addSpaces($l, 12);
+        $name_lines[$k] = addSpaces($l, 14);
     }
-		$cantprice = $producto['cantidad'];
+		$cantprice = $producto -> cantidad;
 		$cantprice .= " X ";
-		$cantprice .= $producto['precioVenta'];
+		$cantprice .= $producto -> precioVenta;
 
-    $qtyx_price = str_split($cantprice, 15);
+    $qtyx_price = str_split($cantprice, 10);
     foreach ($qtyx_price as $k => $l) {
         $l = trim($l);
         $qtyx_price[$k] = addSpaces($l, 12);
     }
 
-    $total_price = str_split($realtotal, 8);
+    $total_price = str_split($subtotal, 7);
     foreach ($total_price as $k => $l) {
         $l = trim($l);
-        $total_price[$k] = addSpaces($l, 8);
+        $total_price[$k] = addSpaces($l, 6);
     }
 
     $counter = 0;
@@ -179,17 +183,14 @@ foreach ($productos as $producto)  {
 }
 $printer -> text("--------------------------------");
 $printer->setEmphasis(true);
-$lineTotal = sprintf('%-5.40s %-1.05s %13.40s','Total.','=', $tot1);
+$lineTotal = sprintf('%-5.40s %-1.05s %13.40s','Total.','=', $total);
 $printer -> text("$lineTotal\n");
-$lineTunai = sprintf('%-5.40s %-1.05s %13.40s','Pago con.','=', $tot2);
+$lineTunai = sprintf('%-5.40s %-1.05s %13.40s','Pago con.','=', $pago);
 $printer -> text("$lineTunai\n");
-$lineDisc = sprintf('%-5.40s %-1.05s %13.40s','Cambio.','=', $tot3);
-$printer -> text("$lineDisc\n");
+
+$lineDisc = sprintf('%-5.40s %-1.05s %13.40s','Cambio.','=', $cambio);
+$printer -> text("$lineDisc\n\n\n");
 $printer->setEmphasis(false);
-$printer -> text("--------------------------------");
-
-
-
 $printer->cut();
 $printer->pulse();
 $printer->close();
