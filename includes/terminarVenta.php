@@ -129,12 +129,13 @@ $printer->text("Ticket: $ticket \n");
 $printer->text("Fecha: $tfecha \n");
 $printer -> text("--------------------------------\n");
 $printer->setEmphasis(true);
+$printer -> setFont(Printer::FONT_B);
+$printer -> setTextSize(1, 1);
 $printer->text(addSpaces('Productos', 22) . addSpaces('Cant/Precio', 12) . addSpaces('Total', 7) . "\n");
 $printer->setEmphasis(false);
 $total = 0;
 foreach ($productos as $producto)  {
-$printer -> setFont(Printer::FONT_B);
-$printer -> setTextSize(1, 1);
+
 	$subtotal = $producto->cantidad * $producto->precioVenta;
 	$total += $subtotal; 
     //Current item ROW 1
