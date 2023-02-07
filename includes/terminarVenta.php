@@ -127,9 +127,9 @@ $printer->setJustification(Printer::JUSTIFY_LEFT);
 $printer->text("Atiende: $vendedor  \n");
 $printer->text("Ticket: $ticket \n");
 $printer->text("Fecha: $tfecha \n");
-$printer -> text("--------------------------------");
+$printer -> text("--------------------------------\n");
 $printer->setEmphasis(true);
-$printer->text(addSpaces('Productos', 14) . addSpaces('Cant/Precio', 12) . addSpaces('Total', 6) . "\n");
+$printer->text(addSpaces('Productos', 22) . addSpaces('Cant/Precio', 12) . addSpaces('Total', 7) . "\n");
 $printer->setEmphasis(false);
 $total = 0;
 foreach ($productos as $producto)  {
@@ -138,10 +138,10 @@ $printer -> setTextSize(1, 1);
 	$subtotal = $producto->cantidad * $producto->precioVenta;
 	$total += $subtotal; 
     //Current item ROW 1
-    $name_lines = str_split($producto -> descripcion, 10);
+    $name_lines = str_split($producto -> descripcion, 20);
     foreach ($name_lines as $k => $l) {
         $l = trim($l);
-        $name_lines[$k] = addSpaces($l, 14);
+        $name_lines[$k] = addSpaces($l, 22);
     }
 		$cantprice = $producto -> cantidad;
 		$cantprice .= " X ";
@@ -153,10 +153,10 @@ $printer -> setTextSize(1, 1);
         $qtyx_price[$k] = addSpaces($l, 12);
     }
 
-    $total_price = str_split($subtotal, 7);
+    $total_price = str_split($subtotal, 5);
     foreach ($total_price as $k => $l) {
         $l = trim($l);
-        $total_price[$k] = addSpaces($l, 6);
+        $total_price[$k] = addSpaces($l, 7);
     }
 
     $counter = 0;
@@ -184,14 +184,13 @@ $printer -> setTextSize(1, 1);
 }
 $printer -> setFont(Printer::FONT_A);
 $printer -> setTextSize(1, 1);
-$printer -> text("--------------------------------");
+$printer -> text("--------------------------------\n");
 $printer->setEmphasis(true);
-$lineTotal = sprintf('%-5.40s %-1.05s %13.40s','Total.','=', $total);
+$lineTotal = sprintf('%-5.40s %-1.05s %13.40s','Total.        ',':', $total);
 $printer -> text("$lineTotal\n");
-$lineTunai = sprintf('%-5.40s %-1.05s %13.40s','Pago con.','=', $pago);
+$lineTunai = sprintf('%-5.40s %-1.05s %13.40s','Pago con.',':', $pago);
 $printer -> text("$lineTunai\n");
-
-$lineDisc = sprintf('%-5.40s %-1.05s %13.40s','Cambio.','=', $cambio);
+$lineDisc = sprintf('%-5.40s %-1.05s %13.40s','Cambio.     ',':', $cambio);
 $printer -> text("$lineDisc\n\n\n");
 $printer->setEmphasis(false);
 $printer->cut();
