@@ -15,7 +15,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.all.min.js
 <link href="
 https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css
 " rel="stylesheet">
-<div class="modal fade" id="vender" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="ventana" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
@@ -68,7 +68,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css
         </div>
     </div>
     </form>
-
+    <script src="../js/vender.js"></script>
     <script>
         let val1 = document.getElementById("pago")
         let val2 = document.getElementById("val2")
@@ -87,7 +87,7 @@ https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css
             }
         }
     </script>
-    <script src="../js/vender.js"></script>
+
     <!-- function restar(){
 var val1 = parseFloat(document.getElementById('pago').value);
 var val2 = parseFloat(document.getElementById('val2').value);

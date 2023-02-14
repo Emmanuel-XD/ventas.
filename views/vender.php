@@ -154,7 +154,7 @@ a { text-decoration: none; }
 		<h3>Total: <?php echo  '$',$granTotal; ?></h3>
 		<form action="../includes/terminarVenta.php" method="POST">
 			<input name="total" type="hidden" value="<?php echo $granTotal;?>">
-			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#vender">
+			<button type="button" class="btn btn-success" data-toggle="modal" data-target="#ventana">
 				<span class="glyphicon glyphicon-plus"></span> Procesar Venta  <i class="fa fa-shopping-cart" aria-hidden="true"></i></a></button>
 			<!-- <button type="submit" class="btn btn-success">Vender <i class="fa fa-shopping-cart" aria-hidden="true"></i></button>-->
 			<a href="../includes/cancelarVenta.php" class="btn btn-danger">Cancelar Venta <i class="fa fa-undo" aria-hidden="true"></i></a>
