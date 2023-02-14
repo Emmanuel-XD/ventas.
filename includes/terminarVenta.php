@@ -7,9 +7,6 @@ use Mike42\Escpos;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
-
-
-
 session_start();
 	$varsesion = $_SESSION['nombre'];
 
@@ -22,9 +19,6 @@ session_start();
 if(!isset($_POST["total"])) exit;
 
 
-session_start();
-
-
 $total = $_POST["total"];
 $pago = $_POST["pago"];
 $cambio = $_POST["cambio"];
@@ -33,6 +27,7 @@ include_once "base_de_datos.php";
 
 
 	require_once ("db.php");
+try{
 $insert = ("INSERT INTO ventas( total,nombre,pago,cambio) VALUES ('$total', '$varsesion', '$pago', '$cambio');");
 $resultado= mysqli_query($conexion, $insert);
 
@@ -74,33 +69,11 @@ ON p.id = pv.id_producto
 WHERE pv.id_venta = ?");
 $sentenciaProductos->execute([$idVenta]);
 $productos = $sentenciaProductos->fetchAll();
-
-/* try {
-	$printconnect = new WindowsPrintConnector("tickets_printer");
-	$printer = new Printer($printconnect);
-    $printer -> text("¡TICKET DE COMPRA!\n\n\n\n");
-	$head = sprintf('%-10.40s %-4.40s %-1.40s %1.40s %-1.40s %2.40s', "Productos", "Cantidad", "","Precio", '',"Total");
-	$printer -> text("$head \n");
-	$printer -> text("--------------------------------");
-
-	foreach ($productos as $producto) 
-	{
-		$realtotal = $producto->cantidad * $producto->precioVenta;
-		$printer -> setTextSize(1, 1);
-		$line = sprintf('%-10.40s %-4.40s %-1.40s %1.40s %-1.40s %2.40s', $producto->descripcion, $producto->cantidad, 'X',$producto->precioVenta, '=',$realtotal);
-		$total = 0;
-		$subtotal = $producto->precioVenta * $producto->cantidad;
-		$total += $subtotal;
-		$printer -> text("$line\n");
-	}
-	$printer -> text("--------------------------------");
-	
-    $printer -> cut();
-    $printer -> close();
-} catch(Exception $e) {
-    $errorTicket = "Couldn't print to this printer: " . $e -> getMessage() . "\n";
-} */
-
+$Ticketmsg = "0";
+}
+catch(Exception $e) {
+    $Ticketmsg = "1";
+}
 
 
 function addSpaces($string = '', $valid_string_length = 0) {
@@ -113,7 +86,7 @@ function addSpaces($string = '', $valid_string_length = 0) {
 
     return $string;
 }
-
+try {
 $connector = new WindowsPrintConnector("tickets_printer");
 $printer = new Printer($connector);
 
@@ -123,6 +96,8 @@ $printer->setPrintLeftMargin(0);
 
 $printer->setJustification(Printer::JUSTIFY_CENTER);
 $printer ->text("TICKET DE COMPRA\n\n\n");
+$printer ->text("Dir: Calle 27 x 14 y 16");
+$printer->text("Tel: 9911165670");
 $printer->setJustification(Printer::JUSTIFY_LEFT);
 $printer->text("Atiende: $vendedor  \n");
 $printer->text("Ticket: $ticket \n");
@@ -187,14 +162,22 @@ $printer -> setFont(Printer::FONT_A);
 $printer -> setTextSize(1, 1);
 $printer -> text("--------------------------------\n");
 $printer->setEmphasis(true);
-$lineTotal = sprintf('%-5.40s %-1.05s %13.40s','Total.        ',':', $total);
-$printer -> text("$lineTotal\n");
+$lineTotal = sprintf('%-5.40s %-1.05s %13.40s','Total.  ',':', $total);
+$printer -> text("$lineTotal$\n");
 $lineTunai = sprintf('%-5.40s %-1.05s %13.40s','Pago con.',':', $pago);
-$printer -> text("$lineTunai\n");
-$lineDisc = sprintf('%-5.40s %-1.05s %13.40s','Cambio.     ',':', $cambio);
-$printer -> text("$lineDisc\n\n\n");
+$printer -> text("$lineTunai$\n");
+$lineDisc = sprintf('%-5.40s %-1.05s %13.40s','Cambio.  ',':', $cambio);
+$printer -> text("$lineDisc$\n\n\n");
 $printer->setEmphasis(false);
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->text("GRACIAS POR SU COMPRA\n");
+$printer->text("WWW.MYSISTEMVENTA.COM\n\n\n\n");
 $printer->cut();
 $printer->pulse();
 $printer->close();
+$Ticketmsg .= "Success";
+}catch(Exception $e) {
+    $Ticketmsg .= "Error";
+}
+echo json_encode($Ticketmsg);
 ?>

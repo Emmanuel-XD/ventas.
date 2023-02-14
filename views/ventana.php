@@ -9,7 +9,12 @@ if ($varsesion == null || $varsesion = '') {
     header("Location:../includes/_sesion/login.php");
 }
 ?>
-
+<script src="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.all.min.js
+"></script>
+<link href="
+https://cdn.jsdelivr.net/npm/sweetalert2@11.7.1/dist/sweetalert2.min.css
+" rel="stylesheet">
 <div class="modal fade" id="vender" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -55,7 +60,7 @@ if ($varsesion == null || $varsesion = '') {
                     <div class="row">
                         <div class="col-xs-12">
                             <center>
-                                <button type="submit" class="btn btn-primary ">Realizar venta</button>
+                                <button id="vender" type="submit" class="btn btn-primary ">Realizar venta</button>
                             </center>
                         </div>
                     </div>
@@ -82,7 +87,7 @@ if ($varsesion == null || $varsesion = '') {
             }
         }
     </script>
-
+    <script src="../js/vender.js"></script>
     <!-- function restar(){
 var val1 = parseFloat(document.getElementById('pago').value);
 var val2 = parseFloat(document.getElementById('val2').value);
