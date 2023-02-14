@@ -61,6 +61,8 @@ $ticket = $venta -> id;
 $tfecha = $venta -> fecha;
 
 
+
+
 $sentenciaProductos = $base_de_datos->prepare("SELECT p.codigo, p.descripcion,p.precioVenta, pv.cantidad
 FROM productos p
 LEFT JOIN 
@@ -87,17 +89,33 @@ function addSpaces($string = '', $valid_string_length = 0) {
     return $string;
 }
 try {
-$connector = new WindowsPrintConnector("tickets_printer");
+$connector = new WindowsPrintConnector("POS58 Printer");
 $printer = new Printer($connector);
 
+include_once "db.php";
+$consulta = "SELECT * FROM datos ";
+
+$resultado = $conexion->query($consulta);
+if ($resultado->num_rows > 0){
+while ($filas = $resultado->fetch_array()){
+    $negocio = $filas['negocio'];
+    $telefono = $filas['telefono'];
+    $direccion = $filas['direccion'];
+    $mensaje = $filas['mensaje'];
+}
+}
 
 $printer->feed();
 $printer->setPrintLeftMargin(0);
 
 $printer->setJustification(Printer::JUSTIFY_CENTER);
-$printer ->text("TICKET DE COMPRA\n\n\n");
-$printer ->text("Dir: Calle 27 x 14 y 16");
-$printer->text("Tel: 9911165670");
+$printer ->text("TICKET DE COMPRA\n\n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer ->text("$negocio \n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer ->text("Dir: $direccion \n");
+$printer->setJustification(Printer::JUSTIFY_CENTER);
+$printer->text("Tel: $telefono \n\n");
 $printer->setJustification(Printer::JUSTIFY_LEFT);
 $printer->text("Atiende: $vendedor  \n");
 $printer->text("Ticket: $ticket \n");
@@ -109,6 +127,7 @@ $printer -> setTextSize(1, 1);
 $printer->text(addSpaces('Productos', 22) . addSpaces('Cant/Precio', 12) . addSpaces('Total', 7) . "\n");
 $printer->setEmphasis(false);
 $total = 0;
+
 foreach ($productos as $producto)  {
 
 	$subtotal = $producto->cantidad * $producto->precioVenta;
@@ -170,7 +189,7 @@ $lineDisc = sprintf('%-5.40s %-1.05s %13.40s','Cambio.  ',':', $cambio);
 $printer -> text("$lineDisc$\n\n\n");
 $printer->setEmphasis(false);
 $printer->setJustification(Printer::JUSTIFY_CENTER);
-$printer->text("GRACIAS POR SU COMPRA\n");
+$printer->text("$mensaje\n");
 $printer->text("WWW.MYSISTEMVENTA.COM\n\n\n\n");
 $printer->cut();
 $printer->pulse();
@@ -179,5 +198,6 @@ $Ticketmsg .= "Success";
 }catch(Exception $e) {
     $Ticketmsg .= "Error";
 }
+
 echo json_encode($Ticketmsg);
 ?>
