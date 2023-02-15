@@ -13,7 +13,7 @@ $("#vender").click(function (e) {
                 icon: 'success',
                 title: 'Compra realizada correctamente, imprimiendo ticket...',
                 showConfirmButton: false,
-                timer: 4000
+                timer: 2500
               })
         }
         if(Response === "0Error"){
@@ -32,6 +32,13 @@ $("#vender").click(function (e) {
                 timer: 2500
               })
         }
-
+        if(Response === "1Datos"){
+            Swal.fire({
+                icon: 'error',
+                title: 'No se proporciono los datos completos, verifica los datos de pago',
+                showConfirmButton: false,
+                timer: 2500
+              })
+        }
     })
 });

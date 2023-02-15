@@ -88,6 +88,7 @@ function addSpaces($string = '', $valid_string_length = 0) {
 
     return $string;
 }
+if(isset($vendedor) && isset($ticket) && isset($tfecha) && isset($productos)){
 try {
 $connector = new WindowsPrintConnector("POS58 Printer");
 $printer = new Printer($connector);
@@ -198,6 +199,9 @@ $Ticketmsg .= "Success";
 }catch(Exception $e) {
     $Ticketmsg .= "Error";
 }
-
+}
+else{
+    $Ticketmsg .= "Datos";
+}
 echo json_encode($Ticketmsg);
 ?>
