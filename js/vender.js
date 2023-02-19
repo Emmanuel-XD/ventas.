@@ -44,12 +44,7 @@ $("#vender").click(function (e) {
         }
         if(Response[0] === "0Normal"){
             window.open(`../includes/imprimirTicket.php?id=${Response[1]}`, "popup");
-            Swal.fire({
-                icon: 'info',
-                title: 'Compra realizada correctamente imprimiendo ticket...',
-                showConfirmButton: false,
-                timer: 2500
-              })
+            
         }
         if(Response[0] === "1Normal"){
             Swal.fire({
