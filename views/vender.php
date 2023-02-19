@@ -32,6 +32,10 @@ $granTotal = 0;
 		<center>
 		<h1>NUEVA VENTA</h1>
 		</center>
+		<div class="form-check form-switch">
+  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+  <label class="form-check-label" for="flexSwitchCheckDefault">Modo impresión local</label>
+</div>
 		<?php
 			if(isset($_GET["status"])){
 				if($_GET["status"] === "1"){

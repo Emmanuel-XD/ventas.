@@ -1,7 +1,7 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
 require '../vendor/autoload.php';
 use Mike42\Escpos;
 use Mike42\Escpos\Printer;
@@ -76,7 +76,7 @@ $Ticketmsg = "0";
 catch(Exception $e) {
     $Ticketmsg = "1";
 }
-
+$printType = $_POST["printType"];
 
 function addSpaces($string = '', $valid_string_length = 0) {
     if (strlen($string) < $valid_string_length) {
@@ -88,6 +88,7 @@ function addSpaces($string = '', $valid_string_length = 0) {
 
     return $string;
 }
+if($printType ==   "true"){
 if(isset($vendedor) && isset($ticket) && isset($tfecha) && isset($productos)){
 try {
 $connector = new WindowsPrintConnector("POS58 Printer");
@@ -202,6 +203,11 @@ $Ticketmsg .= "Success";
 }
 else{
     $Ticketmsg .= "Datos";
+}
+}
+else{
+    $Ticketmsg .= "Normal";
+    $Ticketmsg = [$Ticketmsg, $idVenta];
 }
 echo json_encode($Ticketmsg);
 ?>
